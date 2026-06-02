@@ -92,9 +92,9 @@ def worker():
             "--width", str(width),
             "--height", str(height),
             "--steps", str(steps),
-            "--model", model,
-            "-q", str(quantize),
-            "-o", output_path,
+            "--base-model", model,
+            "--quantize", str(quantize),
+            "--output", output_path,
         ]
         if seed is not None:
             cmd.extend(["--seed", str(seed)])
