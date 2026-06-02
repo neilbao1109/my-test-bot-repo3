@@ -5,7 +5,7 @@ import subprocess
 import base64
 import os
 from queue import Queue
-from typing import Optional
+from typing import Optional, Dict, List
 from datetime import datetime
 
 from fastapi import FastAPI, HTTPException
@@ -51,8 +51,8 @@ class TaskInfo:
 
 # --- State ---
 
-tasks: dict[str, TaskInfo] = {}
-history: list[dict] = []
+tasks: Dict[str, TaskInfo] = {}
+history: List[dict] = []
 task_queue: Queue = Queue()
 current_task_id: Optional[str] = None
 lock = threading.Lock()
