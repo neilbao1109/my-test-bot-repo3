@@ -36,6 +36,7 @@ class GenerateRequest(BaseModel):
     steps: Optional[int] = None
     seed: Optional[int] = None
     model: Optional[str] = None
+    quantize: Optional[int] = None  # -q flag: 4 or 8
     response_format: Optional[str] = "url"  # "url" or "b64_json"
 
 class TaskInfo:
@@ -83,13 +84,16 @@ def worker():
         filename = f"{timestamp}_{short_id}.png"
         output_path = os.path.join(config.OUTPUT_DIR, filename)
 
+        quantize = req.quantize or config.DEFAULT_QUANTIZE
+
         cmd = [
-            "mflux-generate",
+            "mflux-generate-flux2",
             "--prompt", req.prompt,
             "--width", str(width),
             "--height", str(height),
             "--steps", str(steps),
             "--model", model,
+            "-q", str(quantize),
             "-o", output_path,
         ]
         if seed is not None:
@@ -103,7 +107,7 @@ def worker():
             history.append({
                 "task_id": task_id,
                 "prompt": req.prompt,
-                "params": {"width": width, "height": height, "steps": steps, "seed": seed, "model": model},
+                "params": {"width": width, "height": height, "steps": steps, "seed": seed, "model": model, "quantize": quantize},
                 "filename": filename,
                 "created_at": task.created_at,
             })

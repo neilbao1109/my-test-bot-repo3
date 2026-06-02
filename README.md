@@ -1,6 +1,6 @@
 # mflux 本地生图 API 服务
 
-基于 FastAPI + mflux 的本地 AI 图片生成服务，专为 Apple Silicon Mac 设计。
+基于 FastAPI + mflux 的本地 AI 图片生成服务（Flux 2），专为 Apple Silicon Mac 设计。
 
 ## 环境要求
 
@@ -12,7 +12,7 @@
 
 ```bash
 # 1. 安装 mflux（系统级工具）
-uv tool install mflux
+uv tool install --upgrade mflux
 
 # 2. 安装 Python 依赖
 cd my-test-bot-repo3
@@ -41,14 +41,15 @@ POST /generate
   "prompt": "a cute cat sitting on a rainbow",
   "width": 1024,
   "height": 1024,
-  "steps": 20,
+  "steps": 4,
   "seed": 42,
-  "model": "mlx-community/FLUX.1-dev-4bit",
+  "model": "flux2-klein-4b",
+  "quantize": 8,
   "response_format": "url"
 }
 ```
 
-除 `prompt` 外均为可选参数。`response_format` 可选 `"url"`（默认）或 `"b64_json"`。
+除 `prompt` 外均为可选参数。`response_format` 可选 `"url"`（默认）或 `"b64_json"`。`quantize` 支持 `4` 或 `8`。
 
 **响应：**
 ```json
@@ -152,16 +153,18 @@ GET /history
 | 环境变量 | 默认值 | 说明 |
 |---------|--------|------|
 | `MFLUX_PORT` | `8100` | 服务端口 |
-| `MFLUX_MODEL` | `mlx-community/FLUX.1-dev-4bit` | 默认模型 |
+| `MFLUX_MODEL` | `flux2-klein-4b` | 默认模型 |
 | `MFLUX_WIDTH` | `1024` | 默认宽度 |
 | `MFLUX_HEIGHT` | `1024` | 默认高度 |
-| `MFLUX_STEPS` | `20` | 默认步数 |
+| `MFLUX_STEPS` | `4` | 默认步数 |
+| `MFLUX_QUANTIZE` | `8` | 量化级别（4 或 8） |
 | `MFLUX_OUTPUT_DIR` | `./outputs` | 图片输出目录 |
 
 ## 注意事项
 
 1. **串行生图**：由于硬件限制，任务按队列顺序串行执行，同一时间只有一个生图任务在运行
-2. **mflux 安装**：mflux 是系统级工具，需通过 `uv tool install mflux` 单独安装，不包含在 `requirements.txt` 中
+2. **mflux 安装**：mflux 是系统级工具，需通过 `uv tool install --upgrade mflux` 单独安装，不包含在 `requirements.txt` 中
+3. **CLI 命令**：服务使用 `mflux-generate-flux2` 命令（Flux 2 专用），请确保 mflux 版本支持此命令
 3. **仅限 Apple Silicon**：mflux 基于 MLX 框架，仅支持 Apple Silicon Mac
 4. **历史记录**：生成历史存储在内存中，服务重启后会清空（图片文件仍保留在 outputs 目录）
 5. **首次运行**：首次使用某个模型时，mflux 会自动下载模型权重，可能需要较长时间
