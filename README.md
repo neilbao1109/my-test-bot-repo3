@@ -11,18 +11,25 @@
 ## 安装
 
 ```bash
-# 1. 安装 mflux（系统级工具）
+# 1. 安装 mflux（系统级工具，不进 venv）
 uv tool install --upgrade mflux
 
-# 2. 安装 Python 依赖
+# 2. 创建虚拟环境 + 安装依赖
 cd my-test-bot-repo3
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
 ## 启动
 
 ```bash
+# 方式一：手动激活 venv
+source .venv/bin/activate
 python server.py
+
+# 方式二：一键启动（推荐）
+./start.sh
 ```
 
 服务默认运行在 `http://localhost:8100`。
